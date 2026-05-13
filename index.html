@@ -1156,13 +1156,15 @@
       source:    'Data Room Gate — IM'
     };
 
-    // Fire webhook (non-blocking)
+    // Fire webhook (non-blocking) — sent as form data for Make compatibility
     if (GATE_CONFIG.webhookUrl !== 'YOUR_MAKE_WEBHOOK_URL_HERE') {
       try {
+        const formData = new FormData();
+        Object.keys(payload).forEach(key => formData.append(key, payload[key]));
         await fetch(GATE_CONFIG.webhookUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          mode: 'no-cors',
+          body: formData
         });
       } catch(e) {
         console.warn('Webhook error:', e);
